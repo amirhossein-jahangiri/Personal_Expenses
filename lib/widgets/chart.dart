@@ -21,9 +21,6 @@ class Chart extends StatelessWidget {
           totalSum += recentTransactions[i].amount!;
         }
       }
-
-      print(DateFormat.E().format(wekday));
-      print(totalSum);
       return {
         'day': DateFormat.E().format(wekday).substring(0,1),
         'amount':totalSum,

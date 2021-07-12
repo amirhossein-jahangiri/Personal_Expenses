@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import './home_screen.dart';
+import 'package:flutter/services.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -14,7 +22,6 @@ class MyApp extends StatelessWidget {
         accentColor: Colors.amber,
         errorColor: Colors.red,
         fontFamily: 'Quicksand',
-
         textTheme: ThemeData.light().textTheme.copyWith(
           headline6: TextStyle(
             fontFamily: 'OpenSans',

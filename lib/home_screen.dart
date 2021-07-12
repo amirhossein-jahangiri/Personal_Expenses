@@ -25,7 +25,10 @@ class _HomeScreenState extends State<HomeScreen> {
     // ),
   ];
 
-  void _addNewTransaction(String txtTitle, double txtAmount , DateTime chosenDate) {
+  bool _isActiveChart = false;
+
+  void _addNewTransaction(
+      String txtTitle, double txtAmount, DateTime chosenDate) {
     final Transaction newTransaction = Transaction(
       id: DateTime.now().toString(),
       title: txtTitle,
@@ -39,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _startAddNewTransaction(BuildContext context) {
+    setState(() {});
     showModalBottomSheet(
       context: context,
       builder: (_) {
@@ -52,23 +56,25 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _deleteTransaction(String id){
+  void _deleteTransaction(String id) {
     setState(() {
       _transactions.removeWhere((thisone) => thisone.id == id);
     });
   }
 
- List<Transaction> get _recentTransactions{
+  List<Transaction> get _recentTransactions {
     return _transactions.where((thisone) {
       final DateTime today = DateTime.now();
       final late = today.subtract(Duration(days: 7));
       return thisone.date!.isAfter(late);
     }).toList();
- }
-
+  }
 
   @override
   Widget build(BuildContext context) {
+    var mediaQuery = MediaQuery.of(context);
+    Size size = mediaQuery.size;
+    final bool _isLandscape = mediaQuery.orientation == Orientation.landscape;
     return Scaffold(
       appBar: AppBar(
         title: Text('Personal Expenses'),
@@ -83,10 +89,42 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
-
           children: <Widget>[
-            Chart(_transactions),
-            TransactionList(_transactions , _deleteTransaction),
+            if (_isLandscape)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('Show Chart'),
+                  Switch(
+                    value: _isActiveChart,
+                    onChanged: (value) {
+                      setState(() {
+                        _isActiveChart = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            if (!_isLandscape)
+              Container(
+                height: size.height * 0.27,
+                child: Chart(_recentTransactions),
+              ),
+            if (!_isLandscape)
+              Container(
+                height: size.height * 0.6,
+                child: TransactionList(_transactions, _deleteTransaction),
+              ),
+            if (_isLandscape)
+              _isActiveChart
+                  ? Container(
+                      height: size.height * 0.5,
+                      child: Chart(_recentTransactions),
+                    )
+                  : Container(
+                      height: size.height * 0.6,
+                      child: TransactionList(_transactions, _deleteTransaction),
+                    ),
           ],
         ),
       ),
