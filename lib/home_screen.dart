@@ -11,18 +11,18 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final List<Transaction> _transactions = <Transaction>[
-    // Transaction(
-    //   id: '1',
-    //   title: 'New Shoes',
-    //   amount: 69.99,
-    //   date: DateTime.now(),
-    // ),
-    //Transaction(
-    //   id: '2',
-    //   title: 'Weekly Groceries',
-    //   amount: 39.59,
-    //   date: DateTime.now(),
-    // ),
+    Transaction(
+      id: '1',
+      title: 'New Shoes',
+      amount: 69.99,
+      date: DateTime.now(),
+    ),
+    Transaction(
+      id: '2',
+      title: 'Weekly Groceries',
+      amount: 39.59,
+      date: DateTime.now(),
+    ),
   ];
 
   bool _isActiveChart = false;
@@ -70,10 +70,50 @@ class _HomeScreenState extends State<HomeScreen> {
     }).toList();
   }
 
+  List<Widget> _buildPortraitMode(MediaQueryData mediaQuery) {
+    return [
+      Container(
+        height: mediaQuery.size.height * 0.27,
+        child: Chart(_recentTransactions),
+      ),
+      Container(
+        height: mediaQuery.size.height * 0.6,
+        child: TransactionList(_transactions, _deleteTransaction),
+      ),
+    ];
+  }
+
+  List<Widget> _buildLandscapeMode(MediaQueryData mediaQuery) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text('Show Chart'),
+          Switch(
+            value: _isActiveChart,
+            onChanged: (value) {
+              setState(() {
+                _isActiveChart = value;
+              });
+            },
+          ),
+        ],
+      ),
+      _isActiveChart
+          ? Container(
+              height: mediaQuery.size.height * 0.5,
+              child: Chart(_recentTransactions),
+            )
+          : Container(
+              height: mediaQuery.size.height * 0.6,
+              child: TransactionList(_transactions, _deleteTransaction),
+            ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
-    Size size = mediaQuery.size;
     final bool _isLandscape = mediaQuery.orientation == Orientation.landscape;
     return Scaffold(
       appBar: AppBar(
@@ -90,41 +130,8 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            if (_isLandscape)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('Show Chart'),
-                  Switch(
-                    value: _isActiveChart,
-                    onChanged: (value) {
-                      setState(() {
-                        _isActiveChart = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            if (!_isLandscape)
-              Container(
-                height: size.height * 0.27,
-                child: Chart(_recentTransactions),
-              ),
-            if (!_isLandscape)
-              Container(
-                height: size.height * 0.6,
-                child: TransactionList(_transactions, _deleteTransaction),
-              ),
-            if (_isLandscape)
-              _isActiveChart
-                  ? Container(
-                      height: size.height * 0.5,
-                      child: Chart(_recentTransactions),
-                    )
-                  : Container(
-                      height: size.height * 0.6,
-                      child: TransactionList(_transactions, _deleteTransaction),
-                    ),
+            if (_isLandscape) ..._buildLandscapeMode(mediaQuery),
+            if (!_isLandscape) ..._buildPortraitMode(mediaQuery),
           ],
         ),
       ),

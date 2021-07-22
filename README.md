@@ -9,7 +9,7 @@
 <img src='screenshots/img6.png' width='200' height='400'>
 <img src='screenshots/img7.png' width='200' height='400'>
 
-**Created by AmirHossein Jahangiri**
+**Created by AmirHossein Jahangiri** <br>
 *My artistic name is Surena*
 
 ## Getting Started
